@@ -3,6 +3,8 @@ import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import Card from './components/Card.js';
 import { useFonts } from 'expo-font';
+import Confetti from 'react-native-confetti-cannon';
+import { AppLoading } from 'expo';
 
 const cards =[
   "🤡",
@@ -15,7 +17,7 @@ const cards =[
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Russo: require("./assets/fonts/RussoOne-Regular.ttf")
+    'RussoOne-Regular': require("./assets/fonts/RussoOne-Regular.ttf")
   })
   const [board, setBoard] =  React.useState(()=>shuffle([...cards, ...cards]))
   const [selectedCards, setSelectedCards] = React.useState([]);
@@ -48,11 +50,23 @@ export default function App() {
     setScore(0);
     setBoard(shuffle([...cards, ...cards]));
   }
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>MemoGame</Text>
       <Text style={styles.title}>Score: {score}</Text>
-      <Text style={styles.youwin}>{didPlayerWin() ? "YOU WIN 🎉" : null}</Text>
+      {didPlayerWin()
+       ?
+       <>
+       <Confetti count={200} origin={{x: -10, y: 0}} fadeOut={true}/>
+       <Text style={styles.youwin}>"YOU WIN 🎉"</Text>
+       </>
+       : null
+       }
       <View style={styles.board}>
           {board.map((card, index)=> {
             const isTurnedOver =
@@ -83,7 +97,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: 'white',
     fontWeight: '900',
-    fontFamily: 'Russo'
+    fontFamily: 'RussoOne-Regular'
   },
   board: {
     flexDirection: 'row',
@@ -94,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: '#f77f00',
     fontWeight: '900',
-    fontFamily: 'Russo'
+    fontFamily: 'RussoOne-Regular'
   },
 });
 
